@@ -126,7 +126,7 @@ export async function updateTaskDueDate(pageId: string, dueDate: string): Promis
   });
 }
 
-export async function findNearestInProgressTask(assigneeId: string): Promise<TaskRecord | null> {
+export async function listOpenTasksByAssignee(assigneeId: string): Promise<TaskRecord[]> {
   const tasks = await queryAll({
     and: [
       {
@@ -135,16 +135,12 @@ export async function findNearestInProgressTask(assigneeId: string): Promise<Tas
       },
       {
         property: NOTION_PROPS.status,
-        status: { equals: TASK_STATUS.inProgress },
+        status: { does_not_equal: TASK_STATUS.done },
       },
     ],
   });
 
-  if (tasks.length === 0) {
-    return null;
-  }
-
-  return [...tasks].sort((a, b) => {
+  return tasks.sort((a, b) => {
     if (!a.dueDate && !b.dueDate) {
       return 0;
     }
@@ -155,7 +151,7 @@ export async function findNearestInProgressTask(assigneeId: string): Promise<Tas
       return -1;
     }
     return daysUntilYmd(a.dueDate) - daysUntilYmd(b.dueDate);
-  })[0] ?? null;
+  });
 }
 
 export async function markTaskDone(pageId: string): Promise<void> {

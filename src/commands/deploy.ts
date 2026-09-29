@@ -2,8 +2,9 @@ import { REST, Routes } from "discord.js";
 import { config } from "../config.js";
 import { data as taskCreateCommand } from "./taskCreate.js";
 import { data as taskUpdateCommand } from "./taskUpdate.js";
+import { data as taskCommand } from "./task.js";
 
-const commands = [taskCreateCommand, taskUpdateCommand].map((command) => command.toJSON());
+const commands = [taskCreateCommand, taskUpdateCommand, taskCommand].map((command) => command.toJSON());
 
 async function deploy(): Promise<void> {
   const rest = new REST({ version: "10" }).setToken(config.discord.token);

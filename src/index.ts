@@ -2,7 +2,7 @@ import { Client, Events, GatewayIntentBits } from "discord.js";
 import { config } from "./config.js";
 import { execute as executeTaskCreate } from "./commands/taskCreate.js";
 import { execute as executeTaskUpdate } from "./commands/taskUpdate.js";
-import { bindCompletionListener } from "./listeners/completion.js";
+import { execute as executeTask } from "./commands/task.js";
 import { startDeadlineScheduler } from "./schedulers/deadline.js";
 import { startScrumScheduler } from "./schedulers/scrum.js";
 
@@ -14,8 +14,6 @@ const client = new Client({
     GatewayIntentBits.GuildMembers,
   ],
 });
-
-bindCompletionListener(client);
 
 client.once(Events.ClientReady, (readyClient) => {
   console.log(`로그인 완료: ${readyClient.user.tag}`);
@@ -35,6 +33,9 @@ client.on(Events.InteractionCreate, async (interaction) => {
         break;
       case "task-기한수정":
         await executeTaskUpdate(interaction);
+        break;
+      case "태스크":
+        await executeTask(interaction);
         break;
       default:
         break;
